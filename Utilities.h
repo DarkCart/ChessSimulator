@@ -6,6 +6,7 @@
 class Utilities
 {
 public:
-	static std::vector<std::string> split_string(const std::string& str, const std::string& delimiter);
+	static std::vector<std::string> splitString(const std::string& str, const std::string& delimiter);
+	static std::string replaceAll(std::string str, const std::string& from, const std::string& to);
 };
 
