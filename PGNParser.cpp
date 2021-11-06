@@ -42,8 +42,24 @@ void PGNParser::parseMetaDataLine(const std::string& line) {
 
 void PGNParser::parseGameContents(std::string& rawMoves) {
 	std::smatch m;
+	std::vector<std::string> temp;
 	while (std::regex_search(rawMoves, m, gamePattern)) {
-		std::cout << m.str(0) << std::endl;
+		std::string regex_match = m.str(0);
+		std::size_t found = regex_match.find(" ");
+		if (regex_match[found - 1] == '.') {
+			regex_match.replace(found, 1, "");
+		}
+		//std::cout << regex_match << std::endl;
+		temp.push_back(regex_match);
 		rawMoves = m.suffix().str();
 	}
+
+	for (std::string s : temp) {
+		std::string numberless = Utilities::splitString(s, ".").at(1);
+		std::string whiteMove = Utilities::splitString(numberless, " ").at(0);
+		std::string blackMove = Utilities::splitString(numberless, " ").at(1);
+		std::cout << "\x1b[90;107m" << whiteMove << "\x1b[0m" << " " << "\x1b[97;100m" << blackMove << "\x1b[0m" << std::endl;
+	}
+
+	//std::cout << temp.at(0) << std::endl;
 }
