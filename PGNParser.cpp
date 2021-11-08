@@ -58,6 +58,7 @@ void PGNParser::parseGameContents(std::string& rawMoves) {
 		std::string numberless = Utilities::splitString(s, ".").at(1);
 		std::string whiteMove = Utilities::splitString(numberless, " ").at(0);
 		std::string blackMove = Utilities::splitString(numberless, " ").at(1);
+		moves.push_back(GameMove(whiteMove, blackMove));
 		std::cout << "\x1b[90;107m" << whiteMove << "\x1b[0m" << " " << "\x1b[97;100m" << blackMove << "\x1b[0m" << std::endl;
 	}
 
