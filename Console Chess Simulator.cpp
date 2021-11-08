@@ -13,7 +13,6 @@ int main(int argc, char **argv)
     p.readFile(argv[1]);
 
     Board b;
-    b.initBoard();
     b.drawBoard();
 }
 

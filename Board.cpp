@@ -4,7 +4,7 @@
 #define WHITE 97
 #define BLACK 30
 
-void Board::initBoard() {
+Board::Board() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             board[j][i] = ' ';
@@ -12,9 +12,10 @@ void Board::initBoard() {
         }
     }
 
-    updateBoard('a', 1, 'p', WHITE);
-    updateBoard('a', 2, 'K', BLACK);
-    updateBoard('c', 1, 'Q', TRANSPARENT);
+    setCharacterOnBoard('a', 1, 'p', WHITE);
+    setCharacterOnBoard('a', 2, 'K', BLACK);
+
+    moveCharacterOnBoard('a', 1, 'b', 1);
 }
 
 void Board::drawBoard() {
@@ -46,7 +47,18 @@ void Board::drawBoard() {
     std::cout << "┗━┻━┻━┻━┻━┻━┻━┻━┛" << std::endl;
 }
 
-void Board::updateBoard(char file, int rank, char newChar, int color) {
+void Board::setCharacterOnBoard(char file, int rank, char newChar, int color) {
     board[file - 97][rank - 1] = newChar;
     colors[file - 97][rank - 1] = color;
+}
+
+void Board::moveCharacterOnBoard(char oldFile, int oldRank, char newFile, int newRank) {
+    char tempChar = board[oldFile - 97][oldRank - 1];
+    int tempColor = colors[oldFile - 97][oldRank - 1];
+
+    board[oldFile - 97][oldRank - 1] = ' ';
+    colors[oldFile - 97][oldRank - 1] = TRANSPARENT;
+
+    board[newFile - 97][newRank - 1] = tempChar;
+    colors[newFile - 97][newRank - 1] = tempColor;
 }
