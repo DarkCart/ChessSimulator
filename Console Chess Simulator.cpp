@@ -1,5 +1,6 @@
 #include <iostream>
 #include "PGNParser.h"
+#include "Board.h"
 
 int main(int argc, char **argv)
 {   
@@ -10,5 +11,9 @@ int main(int argc, char **argv)
 
     PGNParser p;
     p.readFile(argv[1]);
+
+    Board b;
+    b.initBoard();
+    b.drawBoard();
 }
 
