@@ -10,6 +10,7 @@ class MoveSimulator {
         void simulateMove(GameMove move);
     private:
         void setInitialPositions();
+        void updateBoard();
         std::vector<GamePiece> whitePieces;
         std::vector<GamePiece> blackPieces;
         Board *board;

@@ -2,21 +2,40 @@
 
 #include <cmath>
 
+enum PieceTypes {
+    PAWN, KNIGHT, BISHOP, ROOK, KING, QUEEN, NONE
+};
+
 class GamePiece {
     public:
-        GamePiece(char file, int rank) {
+        GamePiece(char file, int rank, PieceTypes type) {
             this -> file = file;
             this -> rank = rank;
+            this -> type = type;
         }
+
         bool canMove(char newFile, int newRank);
+
+        PieceTypes getPieceType() {
+            return type;
+        }
+
+        int getFile() {
+            return file;
+        }
+
+        int getRank() {
+            return rank;
+        }
     protected:
         char file;
         int rank;
+        PieceTypes type;
 };
 
-class Pawn : GamePiece {
+class Pawn : public GamePiece {
     public:
-        Pawn(char file, int rank) : GamePiece(file, rank) { }
+        Pawn(char file, int rank) : GamePiece(file, rank, PAWN) { }
         bool canMove(char newFile, int newRank) {
             if (file == newFile && newRank - rank < 3) {
                 return true;
@@ -25,9 +44,9 @@ class Pawn : GamePiece {
         }
 };
 
-class Knight : GamePiece {
+class Knight : public GamePiece {
     public:
-        Knight(char file, int rank) : GamePiece(file, rank) { }
+        Knight(char file, int rank) : GamePiece(file, rank, KNIGHT) { }
         bool canMove(char newFile, int newRank) {
             int fileDifference = std::abs(newFile - file);
             int rankDifference = std::abs((newRank - 97) - (rank - 97));
@@ -39,9 +58,9 @@ class Knight : GamePiece {
         }
 };
 
-class Bishop : GamePiece {
+class Bishop : public GamePiece {
     public:
-        Bishop(char file, int rank) : GamePiece(file, rank) { }
+        Bishop(char file, int rank) : GamePiece(file, rank, BISHOP) { }
         bool canMove(char newFile, int newRank) {
             int fileDifference = std::abs(newFile - file);
             int rankDifference = std::abs((newRank - 97) - (rank - 97));
@@ -52,9 +71,9 @@ class Bishop : GamePiece {
         }
 };
 
-class Rook : GamePiece {
+class Rook : public GamePiece {
     public:
-        Rook(char file, int rank) : GamePiece(file, rank) { }
+        Rook(char file, int rank) : GamePiece(file, rank, ROOK) { }
         bool canMove(char newFile, int newRank) {
             if (newFile == file || newRank == rank) {
                 return true;
@@ -63,9 +82,9 @@ class Rook : GamePiece {
         }
 };
 
-class King : GamePiece {
+class King : public GamePiece {
     public:
-        King(char file, int rank) : GamePiece(file, rank) { }
+        King(char file, int rank) : GamePiece(file, rank, KING) { }
         bool canMove(char newFile, int newRank) {
             int fileDifference = std::abs(newFile - file);
             int rankDifference = std::abs((newRank - 97) - (rank - 97));
@@ -77,9 +96,9 @@ class King : GamePiece {
         }
 };
 
-class Queen : GamePiece {
+class Queen : public GamePiece {
     public:
-        Queen(char file, int rank) : GamePiece(file, rank) { }
+        Queen(char file, int rank) : GamePiece(file, rank, QUEEN) { }
         bool canMove(char newFile, int newRank) {
             Bishop temp_bishop(file, rank);
             Rook temp_rook(file, rank);

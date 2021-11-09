@@ -1,9 +1,5 @@
 #include "Board.h"
 
-#define TRANSPARENT 0
-#define WHITE 97
-#define BLACK 30
-
 Board::Board() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -11,11 +7,6 @@ Board::Board() {
             colors[j][i] = 0;
         }
     }
-
-    setCharacterOnBoard('a', 1, 'p', WHITE);
-    setCharacterOnBoard('a', 2, 'K', BLACK);
-
-    moveCharacterOnBoard('a', 1, 'b', 1);
 }
 
 void Board::drawBoard() {
@@ -42,23 +33,33 @@ void Board::drawBoard() {
             ansi_string += "m";
             std::cout << ansi_string << board[j][i] << "\x1b[0m┃";
         }
-        std::cout << " " << (i + 1) << std::endl;
+        std::cout << " " << (9 - (i + 1)) << std::endl;
     }
     std::cout << "┗━┻━┻━┻━┻━┻━┻━┻━┛" << std::endl;
 }
 
 void Board::setCharacterOnBoard(char file, int rank, char newChar, int color) {
-    board[file - 97][rank - 1] = newChar;
-    colors[file - 97][rank - 1] = color;
+    board[file - 97][convertRankToIndex(rank)] = newChar;
+    colors[file - 97][convertRankToIndex(rank)] = color;
 }
 
 void Board::moveCharacterOnBoard(char oldFile, int oldRank, char newFile, int newRank) {
-    char tempChar = board[oldFile - 97][oldRank - 1];
-    int tempColor = colors[oldFile - 97][oldRank - 1];
+    char tempChar = board[oldFile - 97][convertRankToIndex(oldRank)];
+    int tempColor = colors[oldFile - 97][convertRankToIndex(oldRank)];
 
-    board[oldFile - 97][oldRank - 1] = ' ';
-    colors[oldFile - 97][oldRank - 1] = TRANSPARENT;
+    board[oldFile - 97][convertRankToIndex(oldRank)] = ' ';
+    colors[oldFile - 97][convertRankToIndex(oldRank)] = TRANSPARENT;
 
-    board[newFile - 97][newRank - 1] = tempChar;
-    colors[newFile - 97][newRank - 1] = tempColor;
+    board[newFile - 97][convertRankToIndex(newRank)] = tempChar;
+    colors[newFile - 97][convertRankToIndex(newRank)] = tempColor;
+}
+
+int Board::convertRankToIndex(int rank) {
+    if (rank > 4) {
+        return rank - ((rank - 4) * 2);
+    }
+    if (rank < 4) {
+        return rank + (4 - rank) * 2;
+    }
+    return rank;
 }
