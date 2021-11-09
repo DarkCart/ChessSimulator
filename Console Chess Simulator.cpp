@@ -13,9 +13,15 @@ int main(int argc, char **argv)
 
     PGNParser p;
     p.readFile(argv[1]);
+    std::vector<GameMove> moves = p.getMoves();
 
     Board b;
     
     MoveSimulator moveSim(&b);
+
+    for (GameMove move : moves) {
+        moveSim.simulateMove(move);
+        std::cin.ignore();
+    }
 }
 

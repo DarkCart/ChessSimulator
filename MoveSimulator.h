@@ -11,7 +11,9 @@ class MoveSimulator {
     private:
         void setInitialPositions();
         void updateBoard();
-        std::vector<GamePiece> whitePieces;
-        std::vector<GamePiece> blackPieces;
+        void parseMove(std::string& move, std::vector<GamePiece*> pieces);
+        PieceTypes getPieceType(char a);
+        std::vector<GamePiece*> whitePieces;
+        std::vector<GamePiece*> blackPieces;
         Board *board;
 };

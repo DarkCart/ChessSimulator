@@ -5,10 +5,10 @@ GameMove::GameMove(std::string whiteMove, std::string blackMove) {
 	this -> blackMove = blackMove;
 }
 
-std::string GameMove::getWhiteMove() {
+const std::string GameMove::getWhiteMove() {
 	return whiteMove;
 }
 
-std::string GameMove::getBlackMove() {
+const std::string GameMove::getBlackMove() {
 	return blackMove;
 }

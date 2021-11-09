@@ -14,18 +14,18 @@ class GamePiece {
             this -> type = type;
         }
 
-        bool canMove(char newFile, int newRank);
-
-        PieceTypes getPieceType() {
-            return type;
-        }
-
         int getFile() {
             return file;
         }
 
         int getRank() {
             return rank;
+        }
+
+        virtual bool canMove(char newFile, int newRank) = 0;
+
+        PieceTypes getPieceType() {
+            return type;
         }
     protected:
         char file;
