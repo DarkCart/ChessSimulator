@@ -27,6 +27,11 @@ class GamePiece {
         PieceTypes getPieceType() {
             return type;
         }
+
+        void setPosition(char file, int rank) {
+            this->file = file;
+            this->rank = rank;
+        }
     protected:
         char file;
         int rank;

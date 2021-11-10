@@ -1,5 +1,7 @@
 #include "MoveSimulator.h"
 
+int movesSuccessful = 0;
+
 MoveSimulator::MoveSimulator(Board *board) {
     this -> board = board;
     setInitialPositions();
@@ -14,25 +16,30 @@ void MoveSimulator::simulateMove(GameMove move) {
     std::string black = move.getBlackMove();
     parseMove(white, whitePieces);
     parseMove(black, blackPieces);
-    //board->drawBoard();
+    board->drawBoard();
+    std::cout << "Successful game moves: " << movesSuccessful << std::endl;
 }
 
 void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces) {
     PieceTypes targetPieceType = getPieceType(move[0]);
+    int moveLength = move.length();
     for (GamePiece *piece : pieces) {
         if (piece->getPieceType() == targetPieceType) {
-            char destinationFile = move[1];
-            int destinationRank = move[2];
+            int destinationFileIndex = 1, destinationRankIndex = 2;
+
             //std::cout << "0: " << move[0] << " 1: " << move[1] << " 2: " << move[2] << " 3: " << move[3] << std::endl;
-            
-            if (targetPieceType == PAWN) {
-                destinationFile = move[0];
-                destinationRank = move[1];
+            if (moveLength == 2) {
+                destinationFileIndex--;
+                destinationRankIndex--;
             }
-            if (move[1] == 'x') {
-                destinationFile = move[2];
-                destinationRank = move[3];
+
+            if (moveLength == 4) {
+                destinationFileIndex++;
+                destinationRankIndex++;
             }
+
+            char destinationFile = move[destinationFileIndex];
+            int destinationRank = move[destinationRankIndex];
 
             destinationRank -= 48;
 
@@ -40,7 +47,11 @@ void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces
 
             if (piece->canMove(destinationFile, destinationRank)) {
                 std::cout << "found piece for move at " << (char)piece->getFile() << piece->getRank() << std::endl;
+                board->moveCharacterOnBoard(piece->getFile(), piece->getRank(), destinationFile, destinationRank);
+                piece->setPosition(destinationFile, destinationRank);
+                movesSuccessful++;
             }
+
         }
     }
 }
