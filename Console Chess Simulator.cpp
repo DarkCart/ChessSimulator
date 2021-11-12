@@ -19,6 +19,8 @@ int main(int argc, char **argv)
     
     MoveSimulator moveSim(&b);
 
+    //std::cout << moves.size() << std::endl;
+
     for (GameMove move : moves) {
         moveSim.simulateMove(move);
         std::cin.ignore();

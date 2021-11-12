@@ -25,17 +25,22 @@ void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces
     int moveLength = move.length();
     for (GamePiece *piece : pieces) {
         if (piece->getPieceType() == targetPieceType) {
-            int destinationFileIndex = 1, destinationRankIndex = 2;
+            int destinationFileIndex, destinationRankIndex;
 
             //std::cout << "0: " << move[0] << " 1: " << move[1] << " 2: " << move[2] << " 3: " << move[3] << std::endl;
-            if (moveLength == 2) {
-                destinationFileIndex--;
-                destinationRankIndex--;
-            }
-
-            if (moveLength == 4) {
-                destinationFileIndex++;
-                destinationRankIndex++;
+            switch (moveLength) {
+                case 2:
+                    destinationFileIndex = 0;
+                    destinationRankIndex = 1;
+                    break;
+                case 3:
+                    destinationFileIndex = 1;
+                    destinationRankIndex = 2;
+                    break;
+                case 4:
+                    destinationFileIndex = 2;
+                    destinationRankIndex = 3;
+                    break;
             }
 
             char destinationFile = move[destinationFileIndex];
