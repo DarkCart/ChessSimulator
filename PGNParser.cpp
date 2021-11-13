@@ -6,10 +6,19 @@ std::regex gamePattern("\\d+\\.?(\\s?(O-O|O-O-O)?\\s?\\w{1,3}[1-8]\\+?\\s)+(O-O|
 void PGNParser::readFile(const std::string& filename) {
 	std::cout << "Loading file " << filename << std::endl;
 	std::ifstream filestream(filename);
-	std::stringstream buffer;
-	buffer << filestream.rdbuf();
-	rawFile = buffer.str();
+
+	if (!filestream) {
+		std::cout << "Error opening file " << filename << std::endl;
+		std::exit(-1);
+	}
+
+	std::string temp = "";
+	while (!Utilities::safeGetline(filestream, temp).eof()) {
+		rawFile += temp + "\n";
+	}
+
 	rawFileLines = Utilities::splitString(rawFile, "\n");
+
 	parseFile();
 }
 
@@ -18,18 +27,23 @@ void PGNParser::parseFile() {
 	bool beginAppending = false;
 	for (unsigned int i = 0; i < rawFileLines.size(); i++) {
 		std::string line = rawFileLines[i];
+		//std::cout << line << std::endl;
+
 		if (line[0] == '[' && line[line.size() - 1] == ']') {
 			parseMetaDataLine(line);
 		}
 
-		if (line.length() == 0) {
+		if (line.length() == 0 || line.length() == 1) {
 			beginAppending = true;
 		}
-
+		
 		if (beginAppending) {
+			//std::cout << line << std::endl;
 			rawMoves += line + " ";
+			//std::cout << rawMoves << std::endl;
 		}
 	}
+	//std::cout << rawMoves << std::endl;
 	parseGameContents(rawMoves);
 }
 
