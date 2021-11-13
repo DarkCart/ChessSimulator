@@ -14,8 +14,16 @@ MoveSimulator::MoveSimulator(Board *board) {
 void MoveSimulator::simulateMove(GameMove move) {
     std::string white = move.getWhiteMove();
     std::string black = move.getBlackMove();
+
     parseMove(white, whitePieces);
+
+    if (black.length() == 0) {
+        std::cout << "End of game!" << std::endl;
+        std::exit(0);
+    }
+
     parseMove(black, blackPieces);
+
     board->drawBoard();
     std::cout << "Successful game moves: " << movesSuccessful << std::endl;
 }
@@ -23,6 +31,9 @@ void MoveSimulator::simulateMove(GameMove move) {
 void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces) {
     PieceTypes targetPieceType = getPieceType(move[0]);
     int moveLength = move.length();
+
+    bool lock = false;
+
     for (GamePiece *piece : pieces) {
         if (piece->getPieceType() == targetPieceType) {
             int destinationFileIndex, destinationRankIndex;
@@ -50,11 +61,12 @@ void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces
 
             //std::cout << destinationFile << destinationRank << std::endl;
 
-            if (piece->canMove(destinationFile, destinationRank)) {
+            if (piece->canMove(destinationFile, destinationRank) && !lock) {
                 std::cout << "found piece for move at " << (char)piece->getFile() << piece->getRank() << std::endl;
                 board->moveCharacterOnBoard(piece->getFile(), piece->getRank(), destinationFile, destinationRank);
                 piece->setPosition(destinationFile, destinationRank);
                 movesSuccessful++;
+                lock = true;
             }
 
         }
