@@ -19,10 +19,9 @@ void MoveSimulator::simulateMove(GameMove move) {
 
     if (black.length() == 0) {
         std::cout << "End of game!" << std::endl;
-        std::exit(0);
+    } else {
+        parseMove(black, blackPieces);
     }
-
-    parseMove(black, blackPieces);
 
     board->drawBoard();
     std::cout << "Successful game moves: " << movesSuccessful << std::endl;
