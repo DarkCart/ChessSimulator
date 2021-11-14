@@ -61,7 +61,7 @@ void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces
             //std::cout << destinationFile << destinationRank << std::endl;
 
             if (piece->canMove(destinationFile, destinationRank) && !lock) {
-                std::cout << "found piece for move at " << (char)piece->getFile() << piece->getRank() << std::endl;
+                //std::cout << "found piece for move at " << (char)piece->getFile() << piece->getRank() << std::endl;
                 board->moveCharacterOnBoard(piece->getFile(), piece->getRank(), destinationFile, destinationRank);
                 piece->setPosition(destinationFile, destinationRank);
                 movesSuccessful++;
@@ -153,3 +153,11 @@ void MoveSimulator::updateBoard() {
         board->setCharacterOnBoard(piece->getFile(), piece->getRank(), characterToBePlaced, board->BLACK);
     }
 }
+
+ std::vector<GamePiece*> MoveSimulator::getWhitePieces() {
+    return whitePieces;
+ }
+ 
+ std::vector<GamePiece*> MoveSimulator::getBlackPieces() {
+    return blackPieces;
+ }

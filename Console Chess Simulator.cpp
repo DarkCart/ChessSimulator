@@ -3,9 +3,12 @@
 #include "Board.h"
 #include "GamePiece.h"
 #include "MoveSimulator.h"
+#include "DebugConsoleCommands.h"
 
 int main(int argc, char **argv)
-{   
+{
+    std::string line;
+
     if (argc != 2) {
         std::cout << "Improper number of arguments. Specify the .PGN file to be simulated." << std::endl;
         std::exit(-1);
@@ -21,7 +24,8 @@ int main(int argc, char **argv)
 
     for (GameMove move : moves) {
         moveSim.simulateMove(move);
-        std::cin.ignore();
+        std::getline(std::cin, line);
+        DebugConsoleCommands::parseDebugCommand(line, moveSim.getWhitePieces(), moveSim.getBlackPieces());
     }
 }
 

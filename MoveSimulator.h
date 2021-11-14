@@ -8,6 +8,8 @@ class MoveSimulator {
     public:
         MoveSimulator(Board *board);
         void simulateMove(GameMove move);
+        std::vector<GamePiece*> getWhitePieces();
+        std::vector<GamePiece*> getBlackPieces();
     private:
         void setInitialPositions();
         void updateBoard();
