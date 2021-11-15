@@ -21,11 +21,19 @@ int main(int argc, char **argv)
     Board b;
     
     MoveSimulator moveSim(&b);
+/*
+    while (true) {
+        std::getline(std::cin, line);
+        b.moveCharacterOnBoard(line[0], line[1]-'0', line[3], line[4]-'0');
+        b.drawBoard();
+    }
+*/
 
     for (GameMove move : moves) {
         moveSim.simulateMove(move);
         std::getline(std::cin, line);
         DebugConsoleCommands::parseDebugCommand(line, moveSim.getWhitePieces(), moveSim.getBlackPieces());
     }
+
 }
 
