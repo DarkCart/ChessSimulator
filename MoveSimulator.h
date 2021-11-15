@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <algorithm>
 #include "Board.h"
 #include "GameMove.h"
 #include "GamePiece.h"
@@ -15,6 +16,7 @@ class MoveSimulator {
         void updateBoard();
         void parseMove(std::string& move, std::vector<GamePiece*> pieces);
         PieceTypes getPieceType(char a);
+        GamePiece* getPieceAtFileAndRank(char file, int rank, std::vector<GamePiece*> pieces);
         std::vector<GamePiece*> whitePieces;
         std::vector<GamePiece*> blackPieces;
         Board *board;

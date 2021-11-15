@@ -32,6 +32,7 @@ void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces
     int moveLength = move.length();
 
     bool lock = false;
+    int oldSize, newSize;
 
     for (GamePiece *piece : pieces) {
         if (piece->getPieceType() == targetPieceType) {
@@ -62,6 +63,27 @@ void MoveSimulator::parseMove(std::string&  move, std::vector<GamePiece*> pieces
 
             if (piece->canMove(destinationFile, destinationRank) && !lock) {
                 //std::cout << "found piece for move at " << (char)piece->getFile() << piece->getRank() << std::endl;
+                if (move[1] == 'x') {
+                    oldSize = whitePieces.size() + blackPieces.size();
+                    //std::cout << getPieceAtFileAndRank(destinationFile, destinationRank, blackPieces)->getPieceType() << std::endl;
+
+                    GamePiece *temp = getPieceAtFileAndRank(destinationFile, destinationRank, whitePieces);
+                    GamePiece *temp2 = getPieceAtFileAndRank(destinationFile, destinationRank, blackPieces);
+
+                    if (temp != nullptr) {
+                        whitePieces.erase(std::remove(whitePieces.begin(), whitePieces.end(), temp), whitePieces.end());
+                    } else if (temp2 != nullptr) {
+                        blackPieces.erase(std::remove(blackPieces.begin(), blackPieces.end(), temp), blackPieces.end());
+                    }
+                    
+                    newSize = whitePieces.size() + blackPieces.size();
+
+                    if (oldSize == newSize) {
+                        std::cout << "Error, piece at " << (char) destinationFile << destinationRank << " should have been removed but was not!" << std::endl;
+                    } else {
+                        std::cout << "Piece at " << (char) destinationFile << destinationRank << " successfully removed" << std::endl;
+                    }
+                }
                 board->moveCharacterOnBoard(piece->getFile(), piece->getRank(), destinationFile, destinationRank);
                 piece->setPosition(destinationFile, destinationRank);
                 movesSuccessful++;
@@ -154,10 +176,19 @@ void MoveSimulator::updateBoard() {
     }
 }
 
- std::vector<GamePiece*> MoveSimulator::getWhitePieces() {
+std::vector<GamePiece*> MoveSimulator::getWhitePieces() {
     return whitePieces;
  }
  
- std::vector<GamePiece*> MoveSimulator::getBlackPieces() {
+std::vector<GamePiece*> MoveSimulator::getBlackPieces() {
     return blackPieces;
+ }
+
+GamePiece* MoveSimulator::getPieceAtFileAndRank(char file, int rank, std::vector<GamePiece*> pieces) {
+     for (GamePiece* piece: pieces) {
+         if ((char) piece->getFile() == file && piece->getRank() == rank) {
+             return piece;
+         }
+     }
+     return nullptr;
  }

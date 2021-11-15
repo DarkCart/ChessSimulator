@@ -42,7 +42,10 @@ class Pawn : public GamePiece {
     public:
         Pawn(char file, int rank) : GamePiece(file, rank, PAWN) { }
         bool canMove(char newFile, int newRank) {
-            if (file == newFile && newRank - rank < 3) {
+            int fileDifference = std::abs((newFile - 97) - (file - 97));
+            int rankDifference = std::abs(newRank - rank);
+
+            if (fileDifference <= 1 && rankDifference < 3) {
                 return true;
             }
             return false;
@@ -53,8 +56,8 @@ class Knight : public GamePiece {
     public:
         Knight(char file, int rank) : GamePiece(file, rank, KNIGHT) { }
         bool canMove(char newFile, int newRank) {
-            int fileDifference = std::abs(newFile - file);
-            int rankDifference = std::abs((newRank - 97) - (rank - 97));
+            int fileDifference = std::abs((newFile - 97) - (file - 97));
+            int rankDifference = std::abs(newRank - rank);
 
             if ((rankDifference >= 1 && rankDifference <= 2) && (fileDifference >= 1 && fileDifference <= 2)) {
                 return true;
@@ -67,8 +70,8 @@ class Bishop : public GamePiece {
     public:
         Bishop(char file, int rank) : GamePiece(file, rank, BISHOP) { }
         bool canMove(char newFile, int newRank) {
-            int fileDifference = std::abs(newFile - file);
-            int rankDifference = std::abs((newRank - 97) - (rank - 97));
+            int fileDifference = std::abs((newFile - 97) - (file - 97));
+            int rankDifference = std::abs(newRank - rank);
             if (fileDifference == rankDifference) {
                 return true;
             }
@@ -91,8 +94,8 @@ class King : public GamePiece {
     public:
         King(char file, int rank) : GamePiece(file, rank, KING) { }
         bool canMove(char newFile, int newRank) {
-            int fileDifference = std::abs(newFile - file);
-            int rankDifference = std::abs((newRank - 97) - (rank - 97));
+            int fileDifference = std::abs((newFile - 97) - (file - 97));
+            int rankDifference = std::abs(newRank - rank);
 
             if (fileDifference <= 1 && rankDifference <= 1) {
                 return true;
