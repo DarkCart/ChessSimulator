@@ -35,7 +35,9 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
     } else {
         // Otherwise, we can fall back on our standard dissection of the move
         PieceTypes targetPieceType = getPieceType(move[0]); // Identify the target type - in other words, look at the first char and determine what piece we're moving
-        GamePiece* pieceToMove; // Placeholder for the piece that will be moved
+        GamePiece* pieceToMove = nullptr; // Placeholder for the piece that will be moved
+
+        //std::cout << targetPieceType << std::endl;
 
         char targetFile;
         int targetRank;
@@ -57,7 +59,10 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
 
         for (GamePiece *piece: ((color) ? whitePieces: blackPieces)) { // Loop through the pieces dependent on which color is moving
             if (piece->getPieceType() == PAWN && capturing) {
-                if (std::abs(((targetFile - 'a') - piece->getFile() - 'a')) <= 1 && std::abs(targetRank - piece->getRank()) <= 2) { // Special case for pawns that are capturing, as they can move files while normal pawns can't
+                int fileDifference = std::abs(((targetFile - 'a') - (piece->getFile() - 'a')));
+                int rankDifference = std::abs(targetRank - piece->getRank());
+                //std::cout << "Pawn at " << piece->getFile() << piece->getRank() << " is " << fileDifference << " " << rankDifference << std::endl;
+                if (fileDifference <= 1 && rankDifference <= 2) { // Special case for pawns that are capturing, as they can move files while normal pawns can't
                     pieceToMove = piece;
                     break;
                 }
@@ -67,7 +72,25 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
             }
         }
 
-        std::cout << "Possible move: " << pieceToMove->getFile() << pieceToMove->getRank() << " -> " << targetFile << targetRank << std::endl;
+        if (pieceToMove == nullptr) {
+            std::cout << "COULD NOT FIND PIECE TO MOVE" << std::endl;
+            std::exit(-1);
+        }
+
+        std::cout << "Possible " << (color ? "white" : "black") << " move: " << pieceToMove->getFile() << pieceToMove->getRank() << " -> " << targetFile << targetRank << std::endl;
+        
+        
+        if (capturing) {
+            std::cout << "Size before capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
+            if (color) {
+                blackPieces.erase(std::remove(blackPieces.begin(), blackPieces.end(), getPieceByFileAndRank(targetFile, targetRank)), blackPieces.end());
+            } else {
+                whitePieces.erase(std::remove(whitePieces.begin(), whitePieces.end(), getPieceByFileAndRank(targetFile, targetRank)), whitePieces.end());
+            }
+            std::cout << "Size after capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
+        }
+        
+        pieceToMove->setPosition(targetFile, targetRank);
     }
     /*
     PieceTypes targetPieceType = getPieceType(move[0]);
@@ -226,21 +249,18 @@ std::vector<GamePiece*> MoveSimulator::getBlackPieces() {
     return blackPieces;
  }
 
-GamePiece* MoveSimulator::getPieceAtFileAndRank(char file, int rank, std::vector<GamePiece*> pieces) {
-     for (GamePiece* piece: pieces) {
-         if ((char) piece->getFile() == file && piece->getRank() == rank) {
-             return piece;
-         }
-     }
-     return nullptr;
- }
-
-std::vector<GamePiece*> MoveSimulator::getPieceByType(PieceTypes type, std::vector<GamePiece*> pieces) {
-    std::vector<GamePiece*> temp;
-    for (GamePiece *piece: pieces) {
-        if (piece->getPieceType() == type) {
-            temp.push_back(piece);
+GamePiece* MoveSimulator::getPieceByFileAndRank(char file, int rank) {
+    for (GamePiece *piece: whitePieces) {
+        if (piece->getFile() == file && piece->getRank() == rank) {
+            return piece;
         }
     }
-    return temp;
- }
+
+    for (GamePiece *piece: blackPieces) {
+        if (piece->getFile() == file && piece->getRank() == rank) {
+            return piece;
+        }
+    }
+
+    return nullptr;
+}

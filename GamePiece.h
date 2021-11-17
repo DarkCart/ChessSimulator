@@ -58,7 +58,7 @@ class Knight : public GamePiece {
             int fileDifference = std::abs((newFile - 'a') - (file - 'a'));
             int rankDifference = std::abs(newRank - rank);
 
-            if ((rankDifference >= 1 && rankDifference <= 2) && (fileDifference >= 1 && fileDifference <= 2)) {
+            if ((fileDifference == 1 && rankDifference == 2) || (fileDifference == 2 && rankDifference == 1)) {
                 return true;
             }
             return false;

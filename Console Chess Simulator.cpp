@@ -24,10 +24,14 @@ int main(int argc, char **argv)
 /*
     while (true) {
         std::getline(std::cin, line);
-        b.moveCharacterOnBoard(line[0], line[1]-'0', line[3], line[4]-'0');
-        b.drawBoard();
+        DebugConsoleCommands::parseDebugCommand(line, moveSim.getWhitePieces(), moveSim.getBlackPieces());
+        //b.moveCharacterOnBoard(line[0], line[1]-'0', line[3], line[4]-'0');
+        //b.drawBoard();
     }
 */
+
+    //moveSim.simulateMove(moves.at(3));
+
 
     for (GameMove move : moves) {
         moveSim.simulateMove(move);

@@ -22,6 +22,41 @@ void DebugConsoleCommands::parseDebugCommand(std::string& line, std::vector<Game
         }
  
     }
+
+    if (commandParts.at(0) == "can") { // can pawn move e2 e4
+        std::string from = commandParts.at(3);
+        char fromFile = from[0];
+        int fromRank = from[1] - '0';
+
+        std::string to = commandParts.at(4);
+        char toFile = to[0];
+        int toRank = to[1] - '0';
+
+        GamePiece *temp;
+        switch (getPieceTypeByName(commandParts.at(1))) {
+            case QUEEN:
+                temp = new Queen(fromFile, fromRank);
+                break;
+            case KING:
+                temp = new King(fromFile, fromRank);
+                break;
+            case BISHOP:
+                temp = new Bishop(fromFile, fromRank);
+                break;
+            case ROOK:
+                temp = new Rook(fromFile, fromRank);
+                break;
+            case KNIGHT:
+                temp = new Knight(fromFile, fromRank);
+                break;
+            case PAWN:
+                temp = new Pawn(fromFile, fromRank);
+                break;
+        }
+
+        std::cout << commandParts.at(1) << ((temp->canMove(toFile, toRank) == true) ? " can " : " CANNOT ") << "move from " << from << " to " << to << std::endl;
+        delete temp;
+    } 
 }
 
 PieceTypes DebugConsoleCommands::getPieceTypeByName(std::string& name) {
