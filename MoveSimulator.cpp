@@ -29,9 +29,21 @@ void MoveSimulator::simulateMove(GameMove move) {
 
 void MoveSimulator::parseMove(std::string&  move, bool color) {
     if (move == "O-O") {
-        // king-side castling, handle this later
+        std::cout << ((color) ? "White" : "Black") << " king castling king-side, ";
+        if (color) {
+            std::cout << "h1 -> f1, e1 -> g1";
+        } else {
+            std::cout << "h8 -> f8, e8 -> g8";
+        }
+        std::cout << std::endl;
     } else if (move == "O-O-O") {
-        // queen-side castling
+        std::cout << ((color) ? "White" : "Black") << " king castling queen-side, ";
+        if (color) {
+            std::cout << "a1 -> c1, e1 -> d1";
+        } else {
+            std::cout << "a8 -> c8, e8 -> d8";
+        }
+        std::cout << std::endl;   
     } else {
         // Otherwise, we can fall back on our standard dissection of the move
         PieceTypes targetPieceType = getPieceType(move[0]); // Identify the target type - in other words, look at the first char and determine what piece we're moving
@@ -64,33 +76,40 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
                 //std::cout << "Pawn at " << piece->getFile() << piece->getRank() << " is " << fileDifference << " " << rankDifference << std::endl;
                 if (fileDifference <= 1 && rankDifference <= 2) { // Special case for pawns that are capturing, as they can move files while normal pawns can't
                     pieceToMove = piece;
-                    break;
+                    //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
+                    //break;
                 }
-            } else if (piece->getPieceType() == targetPieceType && piece->canMove(targetFile, targetRank)) { // If we're not a capturing pawn, we can just rely on the canMove methods
+            }
+            
+            if (piece->getPieceType() == targetPieceType && piece->canMove(targetFile, targetRank)) { // If we're not a capturing pawn, we can just rely on the canMove methods
                 pieceToMove = piece;
-                break;
+                //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
+                //break;
             }
         }
 
-        if (pieceToMove == nullptr) {
+        /*if (pieceToMove == nullptr) {
             std::cout << "COULD NOT FIND PIECE TO MOVE" << std::endl;
             std::exit(-1);
-        }
+        }*/
+
 
         std::cout << "Possible " << (color ? "white" : "black") << " move: " << pieceToMove->getFile() << pieceToMove->getRank() << " -> " << targetFile << targetRank << std::endl;
         
         
         if (capturing) {
-            std::cout << "Size before capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
+            //std::cout << "Size before capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
             if (color) {
                 blackPieces.erase(std::remove(blackPieces.begin(), blackPieces.end(), getPieceByFileAndRank(targetFile, targetRank)), blackPieces.end());
             } else {
                 whitePieces.erase(std::remove(whitePieces.begin(), whitePieces.end(), getPieceByFileAndRank(targetFile, targetRank)), whitePieces.end());
             }
-            std::cout << "Size after capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
+            //std::cout << "Size after capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
         }
-        
+       
         pieceToMove->setPosition(targetFile, targetRank);
+ 
+        //board->moveCharacterOnBoard(pieceToMove->getFile(), pieceToMove->getRank(), targetFile, targetRank);
     }
     /*
     PieceTypes targetPieceType = getPieceType(move[0]);
