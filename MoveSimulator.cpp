@@ -70,7 +70,7 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
 
         char targetFile;
         int targetRank;
-        bool capturing = false;
+        bool capturing = false, specificFile = false;
 
         if (move[move.length() - 1] != '+') { // Identify where we're going to, this is usually the last two characters of the move, unless there's a check.
             targetRank = move[move.length() - 1] - '0';
@@ -84,6 +84,11 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
             capturing = true;
         }
 
+        if (move.length() == 4 && (move[1] >= 'a' && move[1] <= 'h') && move[move.length() - 1] != '+') {
+            specificFile = true;
+            std::cout << "Specific file" << std::endl;
+        }
+
         //std::cout << targetFile << targetRank << std::endl;
 
         for (GamePiece *piece: ((color) ? whitePieces: blackPieces)) { // Loop through the pieces dependent on which color is moving
@@ -93,20 +98,22 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
                 //std::cout << "Pawn at " << piece->getFile() << piece->getRank() << " is " << fileDifference << " " << rankDifference << std::endl;
                 if (fileDifference <= 1 && rankDifference <= 2) { // Special case for pawns that are capturing, as they can move files while normal pawns can't
                     pieceToMove = piece;
+                    //std::cout << "[pawn capturing] Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
+                    break;
+                }
+            } else if (piece->getPieceType() == targetPieceType && piece->canMove(targetFile, targetRank)) { // If we're not a capturing pawn, we can just rely on the canMove methods
+                if (specificFile && piece->getFile() == move[1] || !specificFile) {
+                    pieceToMove = piece;
                     //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
                 }
             }
 
-            if (piece->getPieceType() == targetPieceType && piece->canMove(targetFile, targetRank)) { // If we're not a capturing pawn, we can just rely on the canMove methods
-                pieceToMove = piece;
-                //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
-            }
         }
 
-        /*if (pieceToMove == nullptr) {
+        if (pieceToMove == nullptr) {
             std::cout << "COULD NOT FIND PIECE TO MOVE" << std::endl;
             std::exit(-1);
-        }*/
+        }
 
 
         std::cout << "Possible " << (color ? "white" : "black") << " move: " << pieceToMove->getFile() << pieceToMove->getRank() << " -> " << targetFile << targetRank << std::endl;

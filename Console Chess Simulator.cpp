@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     }
 */
 
-    //moveSim.simulateMove(moves.at(3));
+    //moveSim.simulateMove(moves.at(7));
 
 
     for (GameMove move : moves) {
