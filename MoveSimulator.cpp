@@ -28,7 +28,11 @@ void MoveSimulator::simulateMove(GameMove move) {
 }
 
 void MoveSimulator::parseMove(std::string&  move, bool color) {
+
     if (move == "O-O") {
+        GamePiece* castlingKing = getPieceByFileAndRank('e', color ? 1 : 8);
+        GamePiece* castlingRook = getPieceByFileAndRank('h', color ? 1 : 8);
+
         std::cout << ((color) ? "White" : "Black") << " king castling king-side, ";
         if (color) {
             std::cout << "h1 -> f1, e1 -> g1";
@@ -36,14 +40,23 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
             std::cout << "h8 -> f8, e8 -> g8";
         }
         std::cout << std::endl;
+
+        castlingRook->setPosition('f', castlingRook->getRank()); 
+        castlingKing->setPosition('g', castlingKing->getRank());  
     } else if (move == "O-O-O") {
+        GamePiece* castlingKing = getPieceByFileAndRank('e', color ? 1 : 8);
+        GamePiece* castlingRook = getPieceByFileAndRank('a', color ? 1 : 8);
+
         std::cout << ((color) ? "White" : "Black") << " king castling queen-side, ";
         if (color) {
-            std::cout << "a1 -> c1, e1 -> d1";
+            std::cout << "a1 -> d1, e1 -> c1";
         } else {
-            std::cout << "a8 -> c8, e8 -> d8";
+            std::cout << "a8 -> d8, e8 -> c8";
         }
-        std::cout << std::endl;   
+        std::cout << std::endl;
+
+        castlingRook->setPosition('d', castlingRook->getRank()); 
+        castlingKing->setPosition('c', castlingKing->getRank());  
     } else {
         // Otherwise, we can fall back on our standard dissection of the move
         PieceTypes targetPieceType = getPieceType(move[0]); // Identify the target type - in other words, look at the first char and determine what piece we're moving
@@ -70,21 +83,19 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
         //std::cout << targetFile << targetRank << std::endl;
 
         for (GamePiece *piece: ((color) ? whitePieces: blackPieces)) { // Loop through the pieces dependent on which color is moving
-            if (piece->getPieceType() == PAWN && capturing) {
+            if (piece->getPieceType() == PAWN && capturing && piece->getFile() == move[0]) {
                 int fileDifference = std::abs(((targetFile - 'a') - (piece->getFile() - 'a')));
                 int rankDifference = std::abs(targetRank - piece->getRank());
                 //std::cout << "Pawn at " << piece->getFile() << piece->getRank() << " is " << fileDifference << " " << rankDifference << std::endl;
                 if (fileDifference <= 1 && rankDifference <= 2) { // Special case for pawns that are capturing, as they can move files while normal pawns can't
                     pieceToMove = piece;
                     //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
-                    //break;
                 }
             }
-            
+
             if (piece->getPieceType() == targetPieceType && piece->canMove(targetFile, targetRank)) { // If we're not a capturing pawn, we can just rely on the canMove methods
                 pieceToMove = piece;
                 //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
-                //break;
             }
         }
 
@@ -262,11 +273,11 @@ void MoveSimulator::updateBoard() {
 
 std::vector<GamePiece*> MoveSimulator::getWhitePieces() {
     return whitePieces;
- }
- 
+}
+
 std::vector<GamePiece*> MoveSimulator::getBlackPieces() {
     return blackPieces;
- }
+}
 
 GamePiece* MoveSimulator::getPieceByFileAndRank(char file, int rank) {
     for (GamePiece *piece: whitePieces) {
