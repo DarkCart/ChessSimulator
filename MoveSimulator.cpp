@@ -23,7 +23,7 @@ void MoveSimulator::simulateMove(GameMove move) {
         parseMove(black, false);
     }
 
-    //board->drawBoard();
+    board->drawBoard();
     //std::cout << "Successful game moves: " << movesSuccessful << std::endl;
 }
 
@@ -43,6 +43,8 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
 
         castlingRook->setPosition('f', castlingRook->getRank()); 
         castlingKing->setPosition('g', castlingKing->getRank());  
+        board->moveCharacterOnBoard('h', color ? 1 : 8, 'f', color ? 1 : 8);
+        board->moveCharacterOnBoard('e', color ? 1 : 8, 'g', color ? 1 : 8);
     } else if (move == "O-O-O") {
         GamePiece* castlingKing = getPieceByFileAndRank('e', color ? 1 : 8);
         GamePiece* castlingRook = getPieceByFileAndRank('a', color ? 1 : 8);
@@ -56,7 +58,9 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
         std::cout << std::endl;
 
         castlingRook->setPosition('d', castlingRook->getRank()); 
-        castlingKing->setPosition('c', castlingKing->getRank());  
+        castlingKing->setPosition('c', castlingKing->getRank());
+        board->moveCharacterOnBoard('a', color ? 1 : 8, 'd', color ? 1 : 8);
+        board->moveCharacterOnBoard('e', color ? 1 : 8, 'c', color ? 1 : 8);  
     } else {
         // Otherwise, we can fall back on our standard dissection of the move
         PieceTypes targetPieceType = getPieceType(move[0]); // Identify the target type - in other words, look at the first char and determine what piece we're moving
@@ -117,10 +121,9 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
             }
             //std::cout << "Size after capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
         }
-       
+
+        board->moveCharacterOnBoard(pieceToMove->getFile(), pieceToMove->getRank(), targetFile, targetRank);
         pieceToMove->setPosition(targetFile, targetRank);
- 
-        //board->moveCharacterOnBoard(pieceToMove->getFile(), pieceToMove->getRank(), targetFile, targetRank);
     }
     /*
     PieceTypes targetPieceType = getPieceType(move[0]);
