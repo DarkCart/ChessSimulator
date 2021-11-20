@@ -13,7 +13,7 @@ class MoveSimulator {
         std::vector<GamePiece*> getBlackPieces();
     private:
         void setInitialPositions();
-        void updateBoard();
+        void setInitialBoardPositions();
         void parseMove(std::string& move, bool color);
         PieceTypes getPieceType(char a);
         GamePiece* getPieceByFileAndRank(char file, int rank);

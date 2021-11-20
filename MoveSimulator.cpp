@@ -6,7 +6,6 @@ MoveSimulator::MoveSimulator(Board *board) {
     this -> board = board;
     setInitialPositions();
 
-    updateBoard();
     board->drawBoard();
     std::cout << "Initial position" << std::endl;
 }
@@ -17,18 +16,17 @@ void MoveSimulator::simulateMove(GameMove move) {
 
     parseMove(white, true);
 
-    if (black.length() == 0) {
+    if (black.length() == 0) { // Depending on whose turn the game ends on, the final black move may not exist. Detect this and alert the user that we're at the end of the game.
         std::cout << "End of game!" << std::endl;
     } else {
         parseMove(black, false);
     }
 
     board->drawBoard();
-    //std::cout << "Successful game moves: " << movesSuccessful << std::endl;
 }
 
 void MoveSimulator::parseMove(std::string&  move, bool color) {
-
+    // Castling is basically a hard-coded move in Chess, the king and rooks can only be in one position for it to happen, so we can hardcode the board/piece movement
     if (move == "O-O") {
         GamePiece* castlingKing = getPieceByFileAndRank('e', color ? 1 : 8);
         GamePiece* castlingRook = getPieceByFileAndRank('h', color ? 1 : 8);
@@ -66,8 +64,6 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
         PieceTypes targetPieceType = getPieceType(move[0]); // Identify the target type - in other words, look at the first char and determine what piece we're moving
         GamePiece* pieceToMove = nullptr; // Placeholder for the piece that will be moved
 
-        //std::cout << targetPieceType << std::endl;
-
         char targetFile;
         int targetRank;
         bool capturing = false, specificFile = false;
@@ -84,25 +80,23 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
             capturing = true;
         }
 
-        if (move.length() == 4 && (move[1] >= 'a' && move[1] <= 'h') && move[move.length() - 1] != '+') {
+        if (move.length() == 4 && (move[1] >= 'a' && move[1] <= 'h') && move[move.length() - 1] != '+') { // Find out if the move specifies a certain file that the piece has to come from
             specificFile = true;
             std::cout << "Specific file" << std::endl;
         }
 
-        //std::cout << targetFile << targetRank << std::endl;
-
         for (GamePiece *piece: ((color) ? whitePieces: blackPieces)) { // Loop through the pieces dependent on which color is moving
-            if (piece->getPieceType() == PAWN && capturing && piece->getFile() == move[0]) {
+            if (piece->getPieceType() == PAWN && capturing && piece->getFile() == move[0]) { // Special case for capturing pawn, make sure we're in the right file, then calculate if it's a legal move
                 int fileDifference = std::abs(((targetFile - 'a') - (piece->getFile() - 'a')));
                 int rankDifference = std::abs(targetRank - piece->getRank());
                 //std::cout << "Pawn at " << piece->getFile() << piece->getRank() << " is " << fileDifference << " " << rankDifference << std::endl;
                 if (fileDifference <= 1 && rankDifference <= 2) { // Special case for pawns that are capturing, as they can move files while normal pawns can't
                     pieceToMove = piece;
                     //std::cout << "[pawn capturing] Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
-                    break;
+                    break; // If we find a pawn that can capture legally in the correct file, we're done. Break out of the loop.
                 }
             } else if (piece->getPieceType() == targetPieceType && piece->canMove(targetFile, targetRank)) { // If we're not a capturing pawn, we can just rely on the canMove methods
-                if (specificFile && piece->getFile() == move[1] || !specificFile) {
+                if (specificFile && piece->getFile() == move[1] || !specificFile) { // Well, almost. If the piece has to come from a specific file according to the move, ensure that is so. Otherwise, all's fair.
                     pieceToMove = piece;
                     //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
                 }
@@ -112,14 +106,14 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
 
         if (pieceToMove == nullptr) {
             std::cout << "COULD NOT FIND PIECE TO MOVE" << std::endl;
-            std::exit(-1);
+            std::exit(-1); // Safeguard, prevents SEGFAULT from an undefined pointer. Basically, if we've gotten through all the pieces without finding anything that can move, we're in trouble.
         }
 
 
-        std::cout << "Possible " << (color ? "white" : "black") << " move: " << pieceToMove->getFile() << pieceToMove->getRank() << " -> " << targetFile << targetRank << std::endl;
+        std::cout << (color ? "White" : "Black") << ": " << pieceToMove->getFile() << pieceToMove->getRank() << " -> " << targetFile << targetRank << std::endl;
         
         
-        if (capturing) {
+        if (capturing) { // If we're capturing, remove the target piece. If it's a white move, remove the corresponding black piece, and vice-versa.
             //std::cout << "Size before capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
             if (color) {
                 blackPieces.erase(std::remove(blackPieces.begin(), blackPieces.end(), getPieceByFileAndRank(targetFile, targetRank)), blackPieces.end());
@@ -129,74 +123,10 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
             //std::cout << "Size after capture " << whitePieces.size() << " " << blackPieces.size() << std::endl;
         }
 
+        // Update our positions on the board and in the piece vectors
         board->moveCharacterOnBoard(pieceToMove->getFile(), pieceToMove->getRank(), targetFile, targetRank);
         pieceToMove->setPosition(targetFile, targetRank);
     }
-    /*
-    PieceTypes targetPieceType = getPieceType(move[0]);
-    int moveLength = move.length();
-
-    bool lock = false;
-    int oldSize, newSize;
-
-    for (GamePiece *piece : pieces) {
-        if (piece->getPieceType() == targetPieceType) {
-            int destinationFileIndex, destinationRankIndex;
-
-            //std::cout << "0: " << move[0] << " 1: " << move[1] << " 2: " << move[2] << " 3: " << move[3] << std::endl;
-            switch (moveLength) {
-                case 2:
-                    destinationFileIndex = 0;
-                    destinationRankIndex = 1;
-                    break;
-                case 3:
-                    destinationFileIndex = 1;
-                    destinationRankIndex = 2;
-                    break;
-                case 4:
-                    destinationFileIndex = 2;
-                    destinationRankIndex = 3;
-                    break;
-            }
-
-            char destinationFile = move[destinationFileIndex];
-            int destinationRank = move[destinationRankIndex];
-
-            destinationRank -= 48;
-
-            //std::cout << destinationFile << destinationRank << std::endl;
-
-            if (piece->canMove(destinationFile, destinationRank)) {
-                //std::cout << "found piece for move at " << (char)piece->getFile() << piece->getRank() << std::endl;
-                if (move[1] == 'x') {
-                    oldSize = whitePieces.size() + blackPieces.size();
-                    //std::cout << getPieceAtFileAndRank(destinationFile, destinationRank, blackPieces)->getPieceType() << std::endl;
-
-                    GamePiece *temp = getPieceAtFileAndRank(destinationFile, destinationRank, whitePieces);
-                    GamePiece *temp2 = getPieceAtFileAndRank(destinationFile, destinationRank, blackPieces);
-
-                    if (temp != nullptr) {
-                        whitePieces.erase(std::remove(whitePieces.begin(), whitePieces.end(), temp), whitePieces.end());
-                    } else if (temp2 != nullptr) {
-                        blackPieces.erase(std::remove(blackPieces.begin(), blackPieces.end(), temp), blackPieces.end());
-                    }
-                    
-                    newSize = whitePieces.size() + blackPieces.size();
-
-                    if (oldSize == newSize) {
-                        std::cout << "Error, piece at " << (char) destinationFile << destinationRank << " should have been removed but was not!" << std::endl;
-                    } else {
-                        std::cout << "Piece at " << (char) destinationFile << destinationRank << " successfully removed" << std::endl;
-                    }
-                }
-                board->moveCharacterOnBoard(piece->getFile(), piece->getRank(), destinationFile, destinationRank);
-                piece->setPosition(destinationFile, destinationRank);
-                movesSuccessful++;
-            }
-
-        }
-    }
-    */
 }
 
 PieceTypes MoveSimulator::getPieceType(char a) {
@@ -241,9 +171,11 @@ void MoveSimulator::setInitialPositions() {
     whitePieces.push_back(new King('e', 1));
     blackPieces.push_back(new Queen('d', 8));
     blackPieces.push_back(new King('e', 8));
+
+    setInitialBoardPositions();
 }
 
-void MoveSimulator::updateBoard() {
+void MoveSimulator::setInitialBoardPositions() {
     for (GamePiece *piece: whitePieces) {
         char characterToBePlaced = ' ';
         if (piece->getPieceType() == PAWN) {
