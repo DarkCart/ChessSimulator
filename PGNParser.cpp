@@ -27,7 +27,6 @@ void PGNParser::parseFile() {
 	bool beginAppending = false;
 	for (unsigned int i = 0; i < rawFileLines.size(); i++) {
 		std::string line = rawFileLines[i];
-		//std::cout << line << std::endl;
 
 		if (line[0] == '[' && line[line.size() - 1] == ']') {
 			parseMetaDataLine(line);
@@ -38,12 +37,9 @@ void PGNParser::parseFile() {
 		}
 		
 		if (beginAppending) {
-			//std::cout << line << std::endl;
 			rawMoves += line + " ";
-			//std::cout << rawMoves << std::endl;
 		}
 	}
-	//std::cout << rawMoves << std::endl;
 	parseGameContents(rawMoves);
 }
 
@@ -63,7 +59,6 @@ void PGNParser::parseGameContents(std::string& rawMoves) {
 		if (regex_match[found - 1] == '.') {
 			regex_match.replace(found, 1, "");
 		}
-		//std::cout << regex_match << std::endl;
 		temp.push_back(regex_match);
 		rawMoves = m.suffix().str();
 	}
@@ -73,12 +68,13 @@ void PGNParser::parseGameContents(std::string& rawMoves) {
 		std::string whiteMove = Utilities::splitString(numberless, " ").at(0);
 		std::string blackMove = Utilities::splitString(numberless, " ").at(1);
 		moves.push_back(GameMove(whiteMove, blackMove));
-		//std::cout << "\x1b[90;107m" << whiteMove << "\x1b[0m" << " " << "\x1b[97;100m" << blackMove << "\x1b[0m" << std::endl;
 	}
-
-	//std::cout << temp.at(0) << std::endl;
 }
 
 std::vector<GameMove> PGNParser::getMoves() {
 	return moves;
+}
+
+std::map<std::string, std::string> PGNParser::getMetaData() {
+	return metaData;
 }

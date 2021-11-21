@@ -1,13 +1,14 @@
 #pragma once
 #include <vector>
 #include <algorithm>
+#include <map>
 #include "Board.h"
 #include "GameMove.h"
 #include "GamePiece.h"
 
 class MoveSimulator {
     public:
-        MoveSimulator(Board *board);
+        MoveSimulator(Board *board, std::map<std::string, std::string> metaData);
         void simulateMove(GameMove move);
         std::vector<GamePiece*> getWhitePieces();
         std::vector<GamePiece*> getBlackPieces();

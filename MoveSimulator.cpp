@@ -2,23 +2,27 @@
 
 int movesSuccessful = 0;
 
-MoveSimulator::MoveSimulator(Board *board) {
+MoveSimulator::MoveSimulator(Board *board, std::map<std::string, std::string> metaData) {
     this -> board = board;
     setInitialPositions();
 
+    std::cout << "White pieces: " << metaData.at("White") << std::endl;
+    std::cout << "Black pieces: " << metaData.at("Black") << std::endl;
+    
     board->drawBoard();
     std::cout << "Initial position" << std::endl;
+    std::cin.ignore();
 }
 
 void MoveSimulator::simulateMove(GameMove move) {
+    std::cout << "\033[2J";
+    
     std::string white = move.getWhiteMove();
     std::string black = move.getBlackMove();
 
     parseMove(white, true);
 
-    if (black.length() == 0) { // Depending on whose turn the game ends on, the final black move may not exist. Detect this and alert the user that we're at the end of the game.
-        std::cout << "End of game!" << std::endl;
-    } else {
+    if (black.length() != 0) { // Depending on whose turn the game ends on, the final black move may not exist. Detect this and alert the user that we're at the end of the game.  
         parseMove(black, false);
     }
 

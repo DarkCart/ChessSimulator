@@ -13,6 +13,7 @@ class PGNParser
 public:
 	void readFile(const std::string& filename);
 	std::vector<GameMove> getMoves();
+	std::map<std::string, std::string> getMetaData();
 private:
 	void parseFile();
 	void parseMetaDataLine(const std::string& line);

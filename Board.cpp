@@ -18,7 +18,7 @@ void Board::drawBoard() {
             std::string ansi_string = "";
             bool darkSquare = false;
 
-            if (i % 2 == 0 && j % 2 != 0 || i % 2 != 0 && j % 2 == 0) {
+            if ((i + j) % 2) {
                 darkSquare = true;
             }
 

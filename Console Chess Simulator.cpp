@@ -17,10 +17,8 @@ int main(int argc, char **argv)
     PGNParser p;
     p.readFile(argv[1]);
     std::vector<GameMove> moves = p.getMoves();
-
-    Board b;
     
-    MoveSimulator moveSim(&b);
+    MoveSimulator moveSim(new Board(), p.getMetaData());
 /*
     while (true) {
         std::getline(std::cin, line);
@@ -30,14 +28,13 @@ int main(int argc, char **argv)
     }
 */
 
-    //moveSim.simulateMove(moves.at(7));
-
-
     for (GameMove move : moves) {
         moveSim.simulateMove(move);
         std::getline(std::cin, line);
         DebugConsoleCommands::parseDebugCommand(line, moveSim.getWhitePieces(), moveSim.getBlackPieces());
     }
 
+    std::cout << std::endl << "Game over!" << std::endl;
+    std::cout << "Result: " << p.getMetaData().at("Result") << std::endl;
 }
 
