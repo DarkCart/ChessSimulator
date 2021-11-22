@@ -52,10 +52,13 @@ void DebugConsoleCommands::parseDebugCommand(std::string& line, std::vector<Game
             case PAWN:
                 temp = new Pawn(fromFile, fromRank);
                 break;
+            case NONE:
+                std::cout << "Cannot specify type NONE!" << std::endl;
+                std::exit(-1);
+                break;
         }
 
         std::cout << commandParts.at(1) << ((temp->canMove(toFile, toRank) == true) ? " can " : " CANNOT ") << "move from " << from << " to " << to << std::endl;
-        delete temp;
     } 
 }
 

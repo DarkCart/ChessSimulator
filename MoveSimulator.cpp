@@ -100,7 +100,7 @@ void MoveSimulator::parseMove(std::string&  move, bool color) {
                     break; // If we find a pawn that can capture legally in the correct file, we're done. Break out of the loop.
                 }
             } else if (piece->getPieceType() == targetPieceType && piece->canMove(targetFile, targetRank)) { // If we're not a capturing pawn, we can just rely on the canMove methods
-                if (specificFile && piece->getFile() == move[1] || !specificFile) { // Well, almost. If the piece has to come from a specific file according to the move, ensure that is so. Otherwise, all's fair.
+                if ((specificFile && piece->getFile() == move[1]) || !specificFile) { // Well, almost. If the piece has to come from a specific file according to the move, ensure that is so. Otherwise, all's fair.
                     pieceToMove = piece;
                     //std::cout << "Could move from " << piece->getFile() << piece->getRank() << " to " << targetFile << targetRank << std::endl;
                 }
